@@ -4,14 +4,7 @@ import {
   Row,
   Col,
   Card,
-  Statistic,
 } from "antd";
-import {
-  TrophyOutlined,
-  TeamOutlined,
-  ShopOutlined,
-  HeartOutlined,
-} from "@ant-design/icons";
 
 const { Content } = Layout;
 const { Title, Paragraph } = Typography;

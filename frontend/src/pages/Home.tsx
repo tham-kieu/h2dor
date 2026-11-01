@@ -28,10 +28,6 @@ interface Product {
   discount?: string;
 }
 
-interface CartItem extends Product {
-  quantity: number;
-}
-
 interface Banner {
   id: number;
   image: string;
