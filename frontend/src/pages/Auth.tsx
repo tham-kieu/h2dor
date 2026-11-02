@@ -4,19 +4,48 @@ import { Form, Input, Button, Tabs, message, Card, Modal } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined, ArrowLeftOutlined, PhoneOutlined } from '@ant-design/icons';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
 
 const { TabPane } = Tabs;
 
-// Dữ liệu mẫu - trong thực tế sẽ gọi API
-const MOCK_USERS = [
-  {
-    name: 'Nguyễn Văn A',
-    email: 'user@example.com',
-    password: '123456',
-    phone: '0987654321',
-    address: 'Hà Nội',
-  },
-];
+interface AuthFormValues {
+  email: string;
+  password: string;
+}
+
+interface RegisterFormValues extends AuthFormValues {
+  fullName: string;
+  phone: string;
+  address?: string;
+}
+
+interface AuthResponse {
+  success: boolean;
+  token: string;
+  user: {
+    name: string;
+    email: string;
+    role: 'user' | 'admin';
+  };
+}
+
+const getErrorMessage = (error: unknown, fallback: string): string => {
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'response' in error &&
+    typeof error.response === 'object' &&
+    error.response !== null &&
+    'data' in error.response &&
+    typeof error.response.data === 'object' &&
+    error.response.data !== null &&
+    'message' in error.response.data &&
+    typeof error.response.data.message === 'string'
+  ) {
+    return error.response.data.message;
+  }
+  return fallback;
+};
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -26,66 +55,45 @@ const Auth = () => {
   const [isForgotPasswordVisible, setIsForgotPasswordVisible] = useState(false);
 
   // Xử lý đăng nhập
-  const handleLogin = (values: any) => {
+  const handleLogin = async (values: AuthFormValues) => {
     setLoading(true);
-    
-    setTimeout(() => {
-      const foundUser = MOCK_USERS.find(
-        (u) => u.email === values.email && u.password === values.password
-      );
-
-      if (foundUser) {
-        const { password, ...userWithoutPassword } = foundUser;
-        login(userWithoutPassword);
-        message.success('Đăng nhập thành công!');
-        navigate('/');
-      } else {
-        message.error('Email hoặc mật khẩu không đúng!');
-      }
+    try {
+      const { data } = await api.post<AuthResponse>('/users/login', values);
+      localStorage.setItem('token', data.token);
+      login(data.user);
+      message.success('Đăng nhập thành công!');
+      navigate('/');
+    } catch (error) {
+      message.error(getErrorMessage(error, 'Đăng nhập thất bại. Vui lòng kiểm tra thông tin.'));
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   // Xử lý đăng ký
-  const handleRegister = (values: any) => {
+  const handleRegister = async (values: RegisterFormValues) => {
     setLoading(true);
-    
-    setTimeout(() => {
-      const existingUser = MOCK_USERS.find((u) => u.email === values.email);
-      if (existingUser) {
-        message.error('Email đã được đăng ký!');
-        setLoading(false);
-        return;
-      }
-
-      const newUser = {
-        name: values.fullName,
+    try {
+      const { data } = await api.post<AuthResponse>('/users/register', {
+        name: values.fullName.trim(),
         email: values.email,
-        phone: values.phone,
-        address: values.address,
-      };
-      
-      login(newUser);
+        password: values.password,
+      });
+      localStorage.setItem('token', data.token);
+      login(data.user);
       message.success('Đăng ký thành công!');
       navigate('/');
+    } catch (error) {
+      message.error(getErrorMessage(error, 'Đăng ký thất bại. Vui lòng thử lại.'));
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   // Xử lý quên mật khẩu
-  const handleForgotPassword = (values: { email: string }) => {
-    setLoading(true);
-    
-    setTimeout(() => {
-      const userExists = MOCK_USERS.some((u) => u.email === values.email);
-      if (userExists) {
-        message.success('Link đặt lại mật khẩu đã được gửi đến email của bạn!');
-        setIsForgotPasswordVisible(false);
-      } else {
-        message.error('Email không tồn tại trong hệ thống!');
-      }
-      setLoading(false);
-    }, 1000);
+  const handleForgotPassword = (_values: { email: string }) => {
+    message.info('Tính năng khôi phục mật khẩu chưa được kết nối.');
+    setIsForgotPasswordVisible(false);
   };
 
   return (

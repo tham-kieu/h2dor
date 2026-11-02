@@ -17,6 +17,7 @@ import {
   TwitterCircleFilled,
   YoutubeFilled,
 } from "@ant-design/icons";
+import LocationReviews from "../components/location/LocationReviews";
 
 const { Content } = Layout;
 const { Title, Paragraph, Text } = Typography;
@@ -254,6 +255,7 @@ const Contact = () => {
          
 
         </Card>
+        <LocationReviews locationId="h2dor-ha-noi" locationName="Cửa hàng H2DOR" />
       </Content>
     </Layout>
   );

@@ -27,6 +27,7 @@ const Header = () => {
     { key: "home", label: <Link to="/">Trang chủ</Link> },
     { key: "about", label: <Link to="/about">Giới thiệu</Link> },
     { key: "collection", label: <Link to="/collection">Sản phẩm</Link> },
+    { key: "workshops", label: <Link to="/workshops">Workshop</Link> },
     { key: "contact", label: <Link to="/contact">Liên hệ</Link> },
   ];
 
@@ -134,9 +135,14 @@ const Header = () => {
               prefix={<SearchOutlined />}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              onPressEnter={() =>
-                navigate(`/products?search=${search}`)
-              }
+              onPressEnter={() => {
+                const query = search.trim();
+                navigate(
+                  query
+                    ? `/products?${new URLSearchParams({ search: query }).toString()}`
+                    : '/products',
+                );
+              }}
               style={{
                 width: 280,
                 borderRadius: 20,

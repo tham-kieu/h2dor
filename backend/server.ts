@@ -5,6 +5,8 @@ import connectDB from "./config/db";
 import usersRouter from "./routes/users.router";
 import productsRouter from "./routes/products.routes";
 import orderRouter from "./routes/order.routes";
+import locationReviewsRouter from "./routes/location-reviews.routes";
+import workshopsRouter from "./routes/workshops.routes";
 
 dotenv.config();
 
@@ -24,6 +26,8 @@ app.get("/", (req, res) => {
 app.use("/api/users", usersRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/orders", orderRouter);
+app.use("/api/locations", locationReviewsRouter);
+app.use("/api/workshops", workshopsRouter);
 
 const PORT = process.env.PORT || 5000;
 

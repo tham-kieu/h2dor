@@ -8,6 +8,8 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Products from "./pages/Products";
+import Workshops from "./pages/Workshops";
+import WorkshopManagement from "./pages/WorkshopManagement";
 import Auth from "./pages/Auth";
 import Checkout from "./pages/Checkout";
 import Profile from "./pages/Profile";
@@ -35,6 +37,8 @@ function App() {
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/products" element={<Products />} />
+                <Route path="/workshops" element={<Workshops />} />
+                <Route path="/workshops/manage" element={<WorkshopManagement />} />
                 <Route path="/auth" element={<Auth />} />
                 
                 {/* Protected Routes - Cần đăng nhập */}
